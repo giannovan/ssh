@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="centos6.sh : " />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>centos6.sh</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/giannovan/ssh">View on GitHub</a>
+
+          <h1 id="project_title">centos6.sh</h1>
+          <h2 id="project_tagline"></h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/giannovan/ssh/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/giannovan/ssh/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a name="binbash" class="anchor" href="#binbash"><span class="octicon octicon-link"></span></a>!/bin/bash</h1>
+
+<h1>
+<a name="initialisasi-var" class="anchor" href="#initialisasi-var"><span class="octicon octicon-link"></span></a>initialisasi var</h1>
+
+<p>OS=<code>uname -p</code>;</p>
+
+<h1>
+<a name="go-to-root" class="anchor" href="#go-to-root"><span class="octicon octicon-link"></span></a>go to root</h1>
+
+<p>cd</p>
+
+<h1>
+<a name="set-locale" class="anchor" href="#set-locale"><span class="octicon octicon-link"></span></a>set locale</h1>
+
+<p>sed -i 's/AcceptEnv/#AcceptEnv/g' /etc/ssh/sshd_config
+service sshd restart</p>
+
+<h1>
+<a name="disable-ipv6" class="anchor" href="#disable-ipv6"><span class="octicon octicon-link"></span></a>disable ipv6</h1>
+
+<p>echo 1 &gt; /proc/sys/net/ipv6/conf/all/disable_ipv6
+sed -i '$ i\echo 1 &gt; /proc/sys/net/ipv6/conf/all/disable_ipv6' /etc/rc.local
+sed -i '$ i\echo 1 &gt; /proc/sys/net/ipv6/conf/all/disable_ipv6' /etc/rc.d/rc.local</p>
+
+<h1>
+<a name="install-wget-and-curl" class="anchor" href="#install-wget-and-curl"><span class="octicon octicon-link"></span></a>install wget and curl</h1>
+
+<p>yum -y install wget curl</p>
+
+<h1>
+<a name="setting-repo" class="anchor" href="#setting-repo"><span class="octicon octicon-link"></span></a>setting repo</h1>
+
+<p>wget <a href="http://dl.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm">http://dl.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm</a>
+wget <a href="http://rpms.famillecollet.com/enterprise/remi-release-6.rpm">http://rpms.famillecollet.com/enterprise/remi-release-6.rpm</a>
+rpm -Uvh epel-release-6-8.noarch.rpm
+rpm -Uvh remi-release-6.rpm</p>
+
+<p>if [ "$OS" == "x86_64" ]; then
+  wget <a href="http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.3-1.el6.rf.x86_64.rpm">http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.3-1.el6.rf.x86_64.rpm</a>
+  rpm -Uvh rpmforge-release-0.5.3-1.el6.rf.x86_64.rpm
+else
+  wget <a href="http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.3-1.el6.rf.i686.rpm">http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.3-1.el6.rf.i686.rpm</a>
+  rpm -Uvh rpmforge-release-0.5.3-1.el6.rf.i686.rpm
+fi</p>
+
+<p>sed -i 's/enabled = 1/enabled = 0/g' /etc/yum.repos.d/rpmforge.repo
+sed -i -e "/^[remi]/,/^[.<em>]/ s|^(enabled[ \t]</em>=[ \t]*0\)|enabled=1|" /etc/yum.repos.d/remi.repo
+rm -f *.rpm</p>
+
+<h1>
+<a name="remove-unused" class="anchor" href="#remove-unused"><span class="octicon octicon-link"></span></a>remove unused</h1>
+
+<p>yum -y remove sendmail;
+yum -y remove httpd;
+yum -y remove cyrus-sasl</p>
+
+<h1>
+<a name="update" class="anchor" href="#update"><span class="octicon octicon-link"></span></a>update</h1>
+
+<p>yum -y update</p>
+
+<h1>
+<a name="install-webserver" class="anchor" href="#install-webserver"><span class="octicon octicon-link"></span></a>install webserver</h1>
+
+<p>yum -y install nginx php-fpm php-cli
+service nginx restart
+service php-fpm restart
+chkconfig nginx on
+chkconfig php-fpm on</p>
+
+<h1>
+<a name="install-essential-package" class="anchor" href="#install-essential-package"><span class="octicon octicon-link"></span></a>install essential package</h1>
+
+<p>yum -y install screen iftop htop nmap bc nethogs openvpn vnstat ngrep mtr git zsh mrtg unrar rsyslog rkhunter mrtg net-snmp net-snmp-utils expect nano bind-utils
+yum -y groupinstall 'Development Tools'
+yum -y install cmake</p>
+
+<p>yum -y --enablerepo=rpmforge install axel sslh ptunnel unrar</p>
+
+<h1>
+<a name="matiin-exim" class="anchor" href="#matiin-exim"><span class="octicon octicon-link"></span></a>matiin exim</h1>
+
+<p>service exim stop
+chkconfig exim off</p>
+
+<h1>
+<a name="setting-vnstat" class="anchor" href="#setting-vnstat"><span class="octicon octicon-link"></span></a>setting vnstat</h1>
+
+<p>vnstat -u -i venet0
+echo "MAILTO=root" &gt; /etc/cron.d/vnstat
+echo "*/5 * * * * root /usr/sbin/vnstat.cron" &gt;&gt; /etc/cron.d/vnstat
+sed -i 's/eth0/venet0/g' /etc/sysconfig/vnstat
+service vnstat restart
+chkconfig vnstat on</p>
+
+<h1>
+<a name="install-screenfetch" class="anchor" href="#install-screenfetch"><span class="octicon octicon-link"></span></a>install screenfetch</h1>
+
+<p>cd
+wget <a href="https://github.com/KittyKatt/screenFetch/raw/master/screenfetch-dev">https://github.com/KittyKatt/screenFetch/raw/master/screenfetch-dev</a>
+mv screenfetch-dev /usr/bin/screenfetch
+chmod +x /usr/bin/screenfetch
+echo "clear" &gt;&gt; .bash_profile
+echo "screenfetch" &gt;&gt; .bash_profile</p>
+
+<h1>
+<a name="install-webserver-1" class="anchor" href="#install-webserver-1"><span class="octicon octicon-link"></span></a>install webserver</h1>
+
+<p>cd
+wget -O /etc/nginx/nginx.conf "<a href="https://raw.github.com/arieonline/autoscript/master/conf/nginx.conf">https://raw.github.com/arieonline/autoscript/master/conf/nginx.conf</a>"
+sed -i 's/www-data/nginx/g' /etc/nginx/nginx.conf
+mkdir -p /home/vps/public_html
+echo "</p><pre>Setup by KangArie | JualSSH.com | @arieonline | 7946F434</pre>" &gt; /home/vps/public_html/index.html
+echo "&lt;?php phpinfo(); ?&gt;" &gt; /home/vps/public_html/info.php
+rm /etc/nginx/conf.d/*
+wget -O /etc/nginx/conf.d/vps.conf "<a href="https://raw.github.com/arieonline/autoscript/master/conf/vps.conf">https://raw.github.com/arieonline/autoscript/master/conf/vps.conf</a>"
+sed -i 's/apache/nginx/g' /etc/php-fpm.d/<a href="http://www.conf">www.conf</a>
+chmod -R +rx /home/vps
+service php-fpm restart
+service nginx restart
+
+<h1>
+<a name="install-openvpn" class="anchor" href="#install-openvpn"><span class="octicon octicon-link"></span></a>install openvpn</h1>
+
+<p>wget -O /etc/openvpn/openvpn.tar "<a href="https://raw.github.com/arieonline/autoscript/master/conf/openvpn-debian.tar">https://raw.github.com/arieonline/autoscript/master/conf/openvpn-debian.tar</a>"
+cd /etc/openvpn/
+tar xf openvpn.tar
+wget -O /etc/openvpn/1194.conf "<a href="https://raw.github.com/arieonline/autoscript/master/conf/1194-centos.conf">https://raw.github.com/arieonline/autoscript/master/conf/1194-centos.conf</a>"
+if [ "$OS" == "x86_64" ]; then
+  wget -O /etc/openvpn/1194.conf "<a href="https://raw.github.com/arieonline/autoscript/master/conf/1194-centos64.conf">https://raw.github.com/arieonline/autoscript/master/conf/1194-centos64.conf</a>"
+fi
+wget -O /etc/iptables.up.rules "<a href="https://raw.github.com/arieonline/autoscript/master/conf/iptables.up.rules">https://raw.github.com/arieonline/autoscript/master/conf/iptables.up.rules</a>"
+sed -i '$ i\iptables-restore &lt; /etc/iptables.up.rules' /etc/rc.local
+sed -i '$ i\iptables-restore &lt; /etc/iptables.up.rules' /etc/rc.d/rc.local
+MYIP=<code>curl -s ifconfig.me</code>;
+MYIP2="s/xxxxxxxxx/$MYIP/g";
+sed -i $MYIP2 /etc/iptables.up.rules;
+iptables-restore &lt; /etc/iptables.up.rules
+sysctl -w net.ipv4.ip_forward=1
+sed -i 's/net.ipv4.ip_forward = 0/net.ipv4.ip_forward = 1/g' /etc/sysctl.conf
+service openvpn restart
+chkconfig openvpn on
+cd</p>
+
+<h1>
+<a name="configure-openvpn-client-config" class="anchor" href="#configure-openvpn-client-config"><span class="octicon octicon-link"></span></a>configure openvpn client config</h1>
+
+<p>cd /etc/openvpn/
+wget -O /etc/openvpn/1194-client.ovpn "<a href="https://raw.github.com/arieonline/autoscript/master/conf/1194-client.conf">https://raw.github.com/arieonline/autoscript/master/conf/1194-client.conf</a>"
+sed -i $MYIP2 /etc/openvpn/1194-client.ovpn;
+PASS=<code>cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 15 | head -n 1</code>;
+useradd -M -s /bin/false KangArie
+echo "KangArie:$PASS" | chpasswd
+echo "KangArie" &gt; pass.txt
+echo "$PASS" &gt;&gt; pass.txt
+tar cf client.tar 1194-client.ovpn pass.txt
+cp client.tar /home/vps/public_html/
+cd</p>
+
+<h1>
+<a name="install-badvpn" class="anchor" href="#install-badvpn"><span class="octicon octicon-link"></span></a>install badvpn</h1>
+
+<p>wget -O /usr/bin/badvpn-udpgw "<a href="https://raw.github.com/arieonline/autoscript/master/conf/badvpn-udpgw">https://raw.github.com/arieonline/autoscript/master/conf/badvpn-udpgw</a>"
+if [ "$OS" == "x86_64" ]; then
+  wget -O /usr/bin/badvpn-udpgw "<a href="https://raw.github.com/arieonline/autoscript/master/conf/badvpn-udpgw64">https://raw.github.com/arieonline/autoscript/master/conf/badvpn-udpgw64</a>"
+fi
+sed -i '$ i\screen -AmdS badvpn badvpn-udpgw --listen-addr 127.0.0.1:7300' /etc/rc.local
+sed -i '$ i\screen -AmdS badvpn badvpn-udpgw --listen-addr 127.0.0.1:7300' /etc/rc.d/rc.local
+chmod +x /usr/bin/badvpn-udpgw
+screen -AmdS badvpn badvpn-udpgw --listen-addr 127.0.0.1:7300</p>
+
+<h1>
+<a name="install-mrtg" class="anchor" href="#install-mrtg"><span class="octicon octicon-link"></span></a>install mrtg</h1>
+
+<p>cd /etc/snmp/
+wget -O /etc/snmp/snmpd.conf "<a href="https://raw.github.com/arieonline/autoscript/master/conf/snmpd.conf">https://raw.github.com/arieonline/autoscript/master/conf/snmpd.conf</a>"
+wget -O /root/mrtg-mem.sh "<a href="https://raw.github.com/arieonline/autoscript/master/conf/mrtg-mem.sh">https://raw.github.com/arieonline/autoscript/master/conf/mrtg-mem.sh</a>"
+chmod +x /root/mrtg-mem.sh
+service snmpd restart
+chkconfig snmpd on
+snmpwalk -v 1 -c public localhost | tail
+mkdir -p /home/vps/public_html/mrtg
+cfgmaker --zero-speed 100000000 --global 'WorkDir: /home/vps/public_html/mrtg' --output /etc/mrtg/mrtg.cfg public@localhost
+curl "<a href="https://raw.github.com/arieonline/autoscript/master/conf/mrtg.conf">https://raw.github.com/arieonline/autoscript/master/conf/mrtg.conf</a>" &gt;&gt; /etc/mrtg/mrtg.cfg
+sed -i 's/WorkDir: \/var\/www\/mrtg/# WorkDir: \/var\/www\/mrtg/g' /etc/mrtg/mrtg.cfg
+sed -i 's/# Options[<em>]: growright, bits/Options[</em>]: growright/g' /etc/mrtg/mrtg.cfg
+indexmaker --output=/home/vps/public_html/mrtg/index.html /etc/mrtg/mrtg.cfg
+echo "0-59/5 * * * * root env LANG=C /usr/bin/mrtg /etc/mrtg/mrtg.cfg" &gt; /etc/cron.d/mrtg
+LANG=C /usr/bin/mrtg /etc/mrtg/mrtg.cfg
+LANG=C /usr/bin/mrtg /etc/mrtg/mrtg.cfg
+LANG=C /usr/bin/mrtg /etc/mrtg/mrtg.cfg
+cd</p>
+
+<h1>
+<a name="setting-port-ssh" class="anchor" href="#setting-port-ssh"><span class="octicon octicon-link"></span></a>setting port ssh</h1>
+
+<p>sed -i '/Port 22/a Port 143' /etc/ssh/sshd_config
+sed -i 's/#Port 22/Port  22/g' /etc/ssh/sshd_config
+service sshd restart
+chkconfig sshd on</p>
+
+<h1>
+<a name="install-dropbear" class="anchor" href="#install-dropbear"><span class="octicon octicon-link"></span></a>install dropbear</h1>
+
+<p>yum -y install dropbear
+echo "OPTIONS=\"-p 109 -p 110 -p 443\"" &gt; /etc/sysconfig/dropbear
+echo "/bin/false" &gt;&gt; /etc/shells
+service dropbear restart
+chkconfig dropbear on</p>
+
+<h1>
+<a name="install-vnstat-gui" class="anchor" href="#install-vnstat-gui"><span class="octicon octicon-link"></span></a>install vnstat gui</h1>
+
+<p>cd /home/vps/public_html/
+wget <a href="http://www.sqweek.com/sqweek/files/vnstat_php_frontend-1.5.1.tar.gz">http://www.sqweek.com/sqweek/files/vnstat_php_frontend-1.5.1.tar.gz</a>
+tar xf vnstat_php_frontend-1.5.1.tar.gz
+rm vnstat_php_frontend-1.5.1.tar.gz
+mv vnstat_php_frontend-1.5.1 vnstat
+cd vnstat
+sed -i 's/eth0/venet0/g' config.php
+sed -i "s/\$iface_list = array('venet0', 'sixxs');/\$iface_list = array('venet0');/g" config.php
+sed -i "s/\$language = 'nl';/\$language = 'en';/g" config.php
+sed -i 's/Internal/Internet/g' config.php
+sed -i '/SixXS IPv6/d' config.php
+cd</p>
+
+<h1>
+<a name="install-fail2ban" class="anchor" href="#install-fail2ban"><span class="octicon octicon-link"></span></a>install fail2ban</h1>
+
+<p>yum -y install fail2ban
+service fail2ban restart
+chkconfig fail2ban on</p>
+
+<h1>
+<a name="install-squid" class="anchor" href="#install-squid"><span class="octicon octicon-link"></span></a>install squid</h1>
+
+<p>yum -y install squid
+wget -O /etc/squid/squid.conf "<a href="https://raw.github.com/arieonline/autoscript/master/conf/squid-centos.conf">https://raw.github.com/arieonline/autoscript/master/conf/squid-centos.conf</a>"
+sed -i $MYIP2 /etc/squid/squid.conf;
+service squid restart
+chkconfig squid on</p>
+
+<h1>
+<a name="install-webmin" class="anchor" href="#install-webmin"><span class="octicon octicon-link"></span></a>install webmin</h1>
+
+<p>cd
+wget <a href="http://prdownloads.sourceforge.net/webadmin/webmin-1.670-1.noarch.rpm">http://prdownloads.sourceforge.net/webadmin/webmin-1.670-1.noarch.rpm</a>
+rpm -i webmin-1.670-1.noarch.rpm;
+rm webmin-1.670-1.noarch.rpm
+service webmin restart
+chkconfig webmin on</p>
+
+<h1>
+<a name="downlaod-script" class="anchor" href="#downlaod-script"><span class="octicon octicon-link"></span></a>downlaod script</h1>
+
+<p>cd
+wget -O speedtest_cli.py "<a href="https://raw.github.com/sivel/speedtest-cli/master/speedtest_cli.py">https://raw.github.com/sivel/speedtest-cli/master/speedtest_cli.py</a>"
+wget -O bench-network.sh "<a href="https://raw.github.com/arieonline/autoscript/master/conf/bench-network.sh">https://raw.github.com/arieonline/autoscript/master/conf/bench-network.sh</a>"
+wget -O ps_mem.py "<a href="https://raw.github.com/pixelb/ps_mem/master/ps_mem.py">https://raw.github.com/pixelb/ps_mem/master/ps_mem.py</a>"
+wget -O limit.sh "<a href="https://raw.github.com/arieonline/autoscript/master/conf/limit.sh">https://raw.github.com/arieonline/autoscript/master/conf/limit.sh</a>"
+curl <a href="http://script.jualssh.com/user-login.sh">http://script.jualssh.com/user-login.sh</a> &gt; user-login.sh
+curl <a href="http://script.jualssh.com/user-expire.sh">http://script.jualssh.com/user-expire.sh</a> &gt; user-expire.sh
+curl <a href="http://script.jualssh.com/user-limit.sh">http://script.jualssh.com/user-limit.sh</a> &gt; user-limit.sh
+echo "0 0 * * * root /root/user-expire.sh" &gt; /etc/cron.d/user-expire
+sed -i '$ i\screen -AmdS limit /root/limit.sh' /etc/rc.local
+sed -i '$ i\screen -AmdS limit /root/limit.sh' /etc/rc.d/rc.local
+chmod +x bench-network.sh
+chmod +x speedtest_cli.py
+chmod +x ps_mem.py
+chmod +x user-login.sh
+chmod +x user-expire.sh
+chmod +x user-limit.sh
+chmod +x limit.sh</p>
+
+<h1>
+<a name="cron" class="anchor" href="#cron"><span class="octicon octicon-link"></span></a>cron</h1>
+
+<p>service crond start
+chkconfig crond on</p>
+
+<h1>
+<a name="set-time-gmt-7" class="anchor" href="#set-time-gmt-7"><span class="octicon octicon-link"></span></a>set time GMT +7</h1>
+
+<p>ln -fs /usr/share/zoneinfo/Asia/Jakarta /etc/localtime</p>
+
+<h1>
+<a name="finalisasi" class="anchor" href="#finalisasi"><span class="octicon octicon-link"></span></a>finalisasi</h1>
+
+<p>chown -R nginx:nginx /home/vps/public_html
+service nginx start
+service php-fpm start
+service vnstat restart
+service openvpn restart
+service snmpd restart
+service sshd restart
+service dropbear restart
+service fail2ban restart
+service squid restart
+service webmin restart
+service crond start
+chkconfig crond on</p>
+
+<h1>
+<a name="info" class="anchor" href="#info"><span class="octicon octicon-link"></span></a>info</h1>
+
+<p>clear
+echo "JualSSH.com | <a href="https://github.com/arieonline" class="user-mention">@arieonline</a> | KangArie | 7946F434" | tee log-install.txt
+echo "===============================================" | tee -a log-install.txt
+echo ""  | tee -a log-install.txt
+echo "Service"  | tee -a log-install.txt
+echo "-------"  | tee -a log-install.txt
+echo "OpenVPN  : TCP 1194 (client config : http://$MYIP/client.tar)"  | tee -a log-install.txt
+echo "OpenSSH  : 22, 143"  | tee -a log-install.txt
+echo "Dropbear : 109, 110, 443"  | tee -a log-install.txt
+echo "Squid3   : 8080 (limit to IP SSH)"  | tee -a log-install.txt
+echo "badvpn   : badvpn-udpgw port 7300"  | tee -a log-install.txt
+echo ""  | tee -a log-install.txt
+echo "Script"  | tee -a log-install.txt
+echo "------"  | tee -a log-install.txt
+echo "screenfetch"  | tee -a log-install.txt
+echo "./ps_mem.py"  | tee -a log-install.txt
+echo "./speedtest_cli.py --share"  | tee -a log-install.txt
+echo "./bench-network.sh"  | tee -a log-install.txt
+echo "./user-login.sh"  | tee -a log-install.txt
+echo "./user-expire.sh"  | tee -a log-install.txt
+echo "./user-limit.sh 2"  | tee -a log-install.txt
+echo ""  | tee -a log-install.txt
+echo "Account Default (utk SSH dan VPN)"  | tee -a log-install.txt
+echo "---------------"  | tee -a log-install.txt
+echo "User     : KangArie"  | tee -a log-install.txt
+echo "Password : $PASS"  | tee -a log-install.txt
+echo ""  | tee -a log-install.txt
+echo "Fitur lain"  | tee -a log-install.txt
+echo "----------"  | tee -a log-install.txt
+echo "Webmin   : http://$MYIP:10000/"  | tee -a log-install.txt
+echo "vnstat   : http://$MYIP/vnstat/"  | tee -a log-install.txt
+echo "MRTG     : http://$MYIP/mrtg/"  | tee -a log-install.txt
+echo "Timezone : Asia/Jakarta"  | tee -a log-install.txt
+echo "Fail2Ban : [on]"  | tee -a log-install.txt
+echo "IPv6     : [off]"  | tee -a log-install.txt
+echo ""  | tee -a log-install.txt
+echo "Log Installasi --&gt; /root/log-install.txt"  | tee -a log-install.txt
+echo ""  | tee -a log-install.txt
+echo "SILAHKAN REBOOT VPS ANDA !"  | tee -a log-install.txt
+echo ""  | tee -a log-install.txt
+echo "==============================================="  | tee -a log-install.txt</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">centos6.sh maintained by <a href="https://github.com/giannovan">giannovan</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
