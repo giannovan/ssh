@@ -3,8 +3,7 @@
 # initialisasi var
 OS=`uname -p`;
 
-# go to root
-cd
+
 
 # set locale
 sed -i 's/AcceptEnv/#AcceptEnv/g' /etc/ssh/sshd_config
